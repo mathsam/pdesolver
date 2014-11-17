@@ -6,8 +6,8 @@ using namespace std;
 
 void print_field(Grid & mygrid){
     cout << setprecision(3);
-    for(int j=0; j< mygrid.get_dimen_y(); j++){
-        for(int i=0; i< mygrid.get_dimen_x(); i++){
+    for(unsigned int j=0; j< mygrid.get_dimen_y(); j++){
+        for(unsigned int i=0; i< mygrid.get_dimen_x(); i++){
             cout << mygrid.get_point(i,j);
             cout << '\t';
         }
