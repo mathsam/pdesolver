@@ -16,11 +16,11 @@ Grid::Grid(int nx, int ny):
 }
 
 Grid::Grid(int n): 
-    nx_(n), ny_(n){
+    nx_(n), ny_(n), field2d_(NULL){
     if(n < 2)
         throw std::invalid_argument("Domain must be at least 2x2");
 
-    double * field2d_ = new double[n*n];
+    field2d_ = new double[n*n];
     InitializeBoundary();
 }
 

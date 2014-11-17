@@ -45,14 +45,15 @@ public:
     }
 
 private:
+    const int nx_;    ///< number of grids in x direction
+    const int ny_;    ///< number of grids in y direction
+
     /**
      * to store 2d field; implemented as an 1d array
      * indexing is faster in y direction, so
      * field2d_(ix, jy) = field2d_[jy + ix * ny_]
     */
     double * field2d_;    
-    const int nx_;    ///< number of grids in x direction
-    const int ny_;    ///< number of grids in y direction
 
     double & get_left_boundary (int jy);
     double & get_right_boundary(int jy);
