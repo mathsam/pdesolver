@@ -46,18 +46,25 @@ void Grid::InitializeBoundary(){
     }
 }
 
-/// the responsibility that ix, and jy are valid lie on the user
-const double & Grid::get_point(int ix, int jy) const{
+/**
+ * @brief returns the value at grid point (ix, jy)
+ * @note spacial rule for negative index or index out of range
+ *       in the x direciton due to the periodic boundary condition
+*/
+double Grid::get_point(int ix, int jy) const{
     Grid * local_this = const_cast<Grid * >(this);
-    const double & point_ij = local_this->set_point(ix, jy);
+    double point_ij = local_this->set_point(ix, jy);
     return point_ij;
 }
 
 double & Grid::set_point(int ix, int jy){
-    if(ix == 0)        return get_left_boundary(jy);
-    if(ix == nx_ -1 )  return get_right_boundary(jy);
-    if(jy == 0)        return get_lower_boundary(ix);
-    if(jy == ny_ -1 )  return get_upper_boundary(ix);
+    if(ix == 0      || ix == nx_)     return get_left_boundary(jy);
+    if(ix == nx_ -1 || ix == -1)      return get_right_boundary(jy);
+    if(jy == 0      )     return get_lower_boundary(ix);
+    if(jy == ny_ -1 )      return get_upper_boundary(ix);
+
+    if(ix < 0 || ix >= nx_ || jy < 0 || jy >= ny_)
+        throw std::invalid_argument("Grid index outof range");
 
     return field2d_[jy + ix * ny_];
 }   

@@ -30,7 +30,7 @@ public:
                        int & min_y, int & max_y);
 
     ///returns the value at point (ix, jy)
-    const double & get_point(int ix, int jy) const;
+    double get_point(int ix, int jy) const;
 
     ///returns the reference for point (ix, jy) so that one can set
     ///the point as set_point(ix,jy) = some_value;
