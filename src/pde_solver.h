@@ -22,17 +22,17 @@ public:
     */
     PdeSolver(int nx, int ny, double dt, double dx, double dy);
 
-    void RunSimulation(double stopping_time);
+    virtual void RunSimulation(double stopping_time);
 
     ///spacial derivative at each grid point for time stepping
     double DfDt(int ix, int jy);
 
     ///time stepping
-    void TimeStepping();
+    virtual void TimeStepping();
 
     ///write field to disk
     void WriteField();
-private:
+protected:
     const int nx_;
     const int ny_;
     const double dt_;

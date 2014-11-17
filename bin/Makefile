@@ -6,8 +6,9 @@ vpath %.cc $(SRC) #vpath usage: vpath <pattern> <directories>
 CXXFLAGS = -Wall -I../src
 
 pde_solver_obj = grid.o driver_pde_solver.o pde_solver.o
+pde_solver_omp_obj = $(pde_solver_obj) driver_pde_solver_omp.o
 test_grid_obj  = grid.o test_grid.o 
-exe_list = pde_solver.x test_grid.x
+exe_list = pde_solver.x test_grid.x pde_solver_omp.x
 
 all: $(exe_list) 
 
@@ -16,6 +17,9 @@ pde_solver.x: $(pde_solver_obj)
 
 test_grid.x: $(test_grid_obj)
 	$(CXX) -o $@ $^
+
+pde_solver_omp.x: $(pde_solver_omp_obj)
+	$(CXX) -o $@ $^ -fopenmp
 
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $< 

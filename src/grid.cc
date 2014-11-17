@@ -31,8 +31,7 @@ Grid::~Grid(){
 void Grid::DomainToSolve(int & min_x, int & max_x,
                    int & min_y, int & max_y){
     min_x = 0;
-    max_x = nx_ - 2; ///no need to solve the right boundary as it's the same
-                     ///as the left boundary (periodic condition in x)
+    max_x = nx_ - 1; 
     min_y = 1; /// y = 0 and y = ny_-1 are fixed
     max_y = ny_ - 2;
 }
@@ -74,9 +73,10 @@ double & Grid::get_left_boundary(int jy){
 }
 
 double & Grid::get_right_boundary(int jy){
-//    return field2d_[jy + (nx_-1)*ny_];
-      return field2d_[jy];///because of periodic boundary condition, the right
-                          ///boundary is actually not used
+    return field2d_[jy + (nx_-1)*ny_];
+// the method below turned out to be not good for parallel
+//      return field2d_[jy];///because of periodic boundary condition, the right
+//                          ///boundary is actually not used
 }
 
 double & Grid::get_lower_boundary(int ix){
