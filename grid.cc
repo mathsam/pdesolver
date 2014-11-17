@@ -1,16 +1,17 @@
 #include"grid.h"
 #include<stdexcept>
 #include<cmath>
+#include<new>
 
 static const double kPI = 3.14159265359;
 
 
 Grid::Grid(int nx, int ny):
-    nx_(nx), ny_(ny){
+    nx_(nx), ny_(ny), field2d_(NULL){
     if(nx < 2 || ny < 2)
         throw std::invalid_argument("Domain must be at least 2x2");
 
-    double * field2d_ = new double[nx*ny];
+    field2d_ = new double[nx*ny];
     InitializeBoundary();
 }
 
@@ -46,9 +47,9 @@ void Grid::InitializeBoundary(){
 }
 
 /// the responsibility that ix, and jy are valid lie on the user
-double Grid::get_point(int ix, int jy) const{
+const double & Grid::get_point(int ix, int jy) const{
     Grid * local_this = const_cast<Grid * >(this);
-    double point_ij = local_this->set_point(ix, jy);
+    const double & point_ij = local_this->set_point(ix, jy);
     return point_ij;
 }
 
@@ -66,7 +67,9 @@ double & Grid::get_left_boundary(int jy){
 }
 
 double & Grid::get_right_boundary(int jy){
-    return field2d_[jy + (nx_-1)*ny_];
+//    return field2d_[jy + (nx_-1)*ny_];
+      return field2d_[jy];///because of periodic boundary condition, the right
+                          ///boundary is actually not used
 }
 
 double & Grid::get_lower_boundary(int ix){

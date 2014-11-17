@@ -30,12 +30,19 @@ public:
                        int & min_y, int & max_y);
 
     ///returns the value at point (ix, jy)
-    inline double get_point(int ix, int jy) const;
+    const double & get_point(int ix, int jy) const;
 
     ///returns the reference for point (ix, jy) so that one can set
     ///the point as set_point(ix,jy) = some_value;
-    inline double & set_point(int ix, int jy);
+    double & set_point(int ix, int jy);
 
+    inline unsigned int get_dimen_x(){
+        return nx_;
+    }
+
+    inline unsigned int get_dimen_y(){
+        return ny_;
+    }
 
 private:
     /**
@@ -47,10 +54,10 @@ private:
     const int nx_;    ///< number of grids in x direction
     const int ny_;    ///< number of grids in y direction
 
-    inline double & get_left_boundary (int jy);
-    inline double & get_right_boundary(int jy);
-    inline double & get_lower_boundary(int ix);
-    inline double & get_upper_boundary(int ix);
+    double & get_left_boundary (int jy);
+    double & get_right_boundary(int jy);
+    double & get_lower_boundary(int ix);
+    double & get_upper_boundary(int ix);
 
     ///hide copy constructor and copy assigment operator
     Grid(Grid& );
