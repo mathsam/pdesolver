@@ -45,6 +45,8 @@ void Grid::InitializeBoundary(){
         double sin2_x = std::sin(x) * std::sin(x);
         field2d_A_[ix * ny_]         = 1.0 - sin2_x; ///lower boundary
         field2d_A_[ny_-1 + ix * ny_] = sin2_x;       ///upper boundary
+        field2d_B_[ix * ny_]         = 1.0 - sin2_x; ///lower boundary
+        field2d_B_[ny_-1 + ix * ny_] = sin2_x;       ///upper boundary
     }
 }
 

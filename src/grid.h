@@ -27,11 +27,11 @@ public:
     ~Grid();
 
     ///set the constant boundary condtion at y = 0 and y = pi
-    void InitializeBoundary();
+    virtual void InitializeBoundary();
 
     ///returns the index range for the domain to solve, which is
     /// [min_x, max_x] x [min_y, max_y]
-    void DomainToSolve(int & min_x, int & max_x,
+    virtual void DomainToSolve(int & min_x, int & max_x,
                        int & min_y, int & max_y);
 
     ///returns the value at point (ix, jy)
@@ -53,7 +53,7 @@ public:
         return ny_;
     }
 
-private:
+protected:
     const int nx_;    ///< number of grids in x direction
     const int ny_;    ///< number of grids in y direction
 
@@ -72,6 +72,7 @@ private:
     double & get_lower_boundary(double* field2d, int ix);
     double & get_upper_boundary(double* field2d, int ix);
 
+private:
     ///hide copy constructor and copy assigment operator
     Grid(Grid& );
     Grid& operator=(const Grid& );
