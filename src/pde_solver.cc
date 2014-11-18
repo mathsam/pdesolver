@@ -1,6 +1,7 @@
 #include"pde_solver.h"
 #include<iostream>
 #include<fstream>
+#include<iomanip>
 
 static const double kKappa = 1.0;
 
@@ -36,14 +37,16 @@ double PdeSolver::DfDt(int ix, int jy){
 void PdeSolver::TimeStepping(){
     for(int i = min_x_; i <= max_x_; ++i){
         for(int j = min_y_; j <= max_y_; ++j){
-            field2d_.set_point(i,j) += DfDt(i,j) * dt_; ///simple explicit Euler scheme
+            field2d_.set_point(i,j) = field2d_.get_point(i,j) + DfDt(i,j) * dt_; ///simple explicit Euler scheme
         }
     }
+    field2d_.UpdateField();
 }
 
 void PdeSolver::WriteField(){
     std::ofstream result_file;
     result_file.open("result.csv");
+    result_file << std::setprecision(5) << std::fixed;
     for(int j = 0; j < ny_; ++j){
         for (int i = 0; i < nx_; ++i){
             result_file << field2d_.get_point(i,j) << '\t';

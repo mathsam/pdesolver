@@ -20,15 +20,14 @@ void PdeSolverOmp::TimeStepping(){
     ///fork
     #pragma omp parallel default(shared)
     {
-       int th_id = omp_get_thread_num();
 
         #pragma omp for
         for(int i = 0; i < max_x_; ++i){
-            std::cout << "Thread " << th_id << " is doing row " << i << std::endl; 
             for(int j = min_y_; j <= max_y_; ++j){
-                field2d_.set_point(i,j) += DfDt(i,j) * dt_;
+                field2d_.set_point(i,j) = field2d_.get_point(i,j) + DfDt(i,j) * dt_;
             }
         }
     }///merge 
+    field2d_.UpdateField();
 }
 

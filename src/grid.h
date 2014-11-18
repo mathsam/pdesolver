@@ -9,6 +9,11 @@
  * that is T(0,y) = T(pi,y)
  * and T(x,0) = cos^2(x), T(x,pi) = sin^2(x)
  * indexing follows the C notation that first element has index 0
+ *
+ * stores two fields, field_A_ and field_B_
+ * One stores current field, the other stores the field one step
+ * forward. UpdateField() switches the two field, intending for a
+ * time step forward
  */
 
 class Grid{
@@ -34,7 +39,11 @@ public:
 
     ///returns the reference for point (ix, jy) so that one can set
     ///the point as set_point(ix,jy) = some_value;
+    ///set the field other than used by get_point
     double & set_point(int ix, int jy);
+
+    ///after a time step, update
+    void UpdateField();
 
     inline unsigned int get_dimen_x(){
         return nx_;
@@ -52,13 +61,16 @@ private:
      * to store 2d field; implemented as an 1d array
      * indexing is faster in y direction, so
      * field2d_(ix, jy) = field2d_[jy + ix * ny_]
+     * Use two grids to store current field and a time step forward
     */
-    double * field2d_;    
+    double * field2d_A_;    
+    double * field2d_B_; 
 
-    double & get_left_boundary (int jy);
-    double & get_right_boundary(int jy);
-    double & get_lower_boundary(int ix);
-    double & get_upper_boundary(int ix);
+    double & GetFieldPoint(double* field2d, int ix, int jy);
+    double & get_left_boundary (double* field2d, int jy);
+    double & get_right_boundary(double* field2d, int jy);
+    double & get_lower_boundary(double* field2d, int ix);
+    double & get_upper_boundary(double* field2d, int ix);
 
     ///hide copy constructor and copy assigment operator
     Grid(Grid& );
