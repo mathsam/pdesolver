@@ -15,12 +15,23 @@ PdeSolver::PdeSolver(int nx, int ny, double dt, double dx, double dy):
 };
 
 void PdeSolver::RunSimulation(double stopping_time){
+    InitializeField();
     while(current_time_ < stopping_time){
         TimeStepping();
         current_time_ += dt_;
     }
     WriteField();
 }
+
+void PdeSolver::InitializeField(){
+    for(int i = min_x_; i <= max_x_; ++i){
+        for(int j = min_y_; j <= max_y_; ++j){
+            field2d_.set_point(i,j) = 0.0; ///simply set the working field to 0
+        }
+    }
+    field2d_.UpdateField();
+}
+
 
 
 double PdeSolver::DfDt(int ix, int jy){

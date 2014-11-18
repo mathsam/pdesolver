@@ -22,7 +22,7 @@ void PdeSolverOmp::TimeStepping(){
     {
 
         #pragma omp for
-        for(int i = 0; i < max_x_; ++i){
+        for(int i = 0; i <= max_x_; ++i){
             for(int j = min_y_; j <= max_y_; ++j){
                 field2d_.set_point(i,j) = field2d_.get_point(i,j) + DfDt(i,j) * dt_;
             }

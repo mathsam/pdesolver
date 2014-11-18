@@ -30,6 +30,8 @@ public:
 
     virtual void RunSimulation(double stopping_time, int root=0);
 
+    virtual void InitializeField();
+
     ///spacial derivative at each grid point for time stepping
     double DfDt(int ix, int jy);
 

@@ -24,6 +24,13 @@ public:
 
     virtual void RunSimulation(double stopping_time);
 
+    /**
+     *@brief set up the initial condition
+     *
+     * here simply set everything to zero
+    */
+    virtual void InitializeField();
+
     ///spacial derivative at each grid point for time stepping
     double DfDt(int ix, int jy);
 

@@ -17,6 +17,7 @@ PdeSolverOmpi::PdeSolverOmpi(int nx, int ny,
 };
 
 void PdeSolverOmpi::RunSimulation(double stopping_time, int root){
+    InitializeField();
     while(current_time_ < stopping_time){
         field2d_.UpdateHalo();///update halo grid before time stepping
         TimeStepping();
@@ -25,6 +26,14 @@ void PdeSolverOmpi::RunSimulation(double stopping_time, int root){
     WriteField(root);
 }
 
+void PdeSolverOmpi::InitializeField(){
+    for(int i = min_x_; i <= max_x_; ++i){
+        for(int j = min_y_; j <= max_y_; ++j){
+            field2d_.set_point(i,j) = 0.0; ///simply set the working field to 0
+        }
+    }
+    field2d_.UpdateField();
+}
 
 double PdeSolverOmpi::DfDt(int ix, int jy){
     static const double inverse_dxdy = kKappa/dx_/dy_;
@@ -47,14 +56,16 @@ void PdeSolverOmpi::TimeStepping(){
 }
 
 void PdeSolverOmpi::WriteField(int root){
+    double * global_field = NULL;
+    field2d_.UpdateHalo(); //synchronize before output
+    if(root == rank_) global_field = new double[nx_wo_halo_ * ny_ * num_proc_];
+    field2d_.GatherField(global_field, root);
+
     if(root == rank_){
         std::ofstream result_file;
         result_file.open("result.csv");
         result_file << std::setprecision(5) << std::fixed;
 
-        field2d_.UpdateHalo(); //synchronize before output
-        double global_field[nx_wo_halo_ * ny_ * num_proc_];
-        field2d_.GatherField(global_field, root);
         for(int j = 0; j < ny_; ++j){
             for (int i = 0; i < nx_wo_halo_ * num_proc_; ++i){
                 result_file << global_field[j + i*ny_] << '\t';

@@ -27,11 +27,14 @@ int main(int argc, char* argv[]){
     double dx = kPI / double(nx);
     double dy = kPI / double(ny);
     double dt = dx*dx / 8.0;
-    double stopping_time = kPI*kPI / 2.0;
+    double stopping_time = kPI*kPI / 2.0; 
     int halo_width_x = 1;
     int root = 0;
 
     PdeSolverOmpi mysolver(nx_per_proc, ny, rank, num_proc, halo_width_x,
                            dt,dx,dy);
     mysolver.RunSimulation(stopping_time, root);
+
+    MPI_Finalize();
+    return 0;
 }

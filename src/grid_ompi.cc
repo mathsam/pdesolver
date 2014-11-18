@@ -12,7 +12,7 @@ GridOmpi::GridOmpi(int nx, int ny, int rank, int num_proc,
     left_rank_(  (rank+num_proc-1)%num_proc),
     right_rank_( (rank+1)%num_proc),
     nx_wo_halo_(nx){
-    InitializeBoundary();    
+    InitializeBoundary();
 };
 
 void GridOmpi::DomainToSolve(int & min_x, int & max_x,
@@ -23,7 +23,7 @@ void GridOmpi::DomainToSolve(int & min_x, int & max_x,
     max_y = ny_ - 2;
 }
 
-void GridOmpi::InitalizeBoundary(){
+void GridOmpi::InitializeBoundary(){
     for(int ix = 0; ix < nx_; ix++){
         double x = double(rank_*nx_wo_halo_-1 + ix) 
                  / double(nx_wo_halo_ * num_proc_-1) * kPI;
@@ -46,45 +46,44 @@ void GridOmpi::UpdateHalo(){
     MPI_Status Stat;
     ///update all the right halo
     if(rank_%2 == 0){    
-       rc = MPI_Send(&field2d_A_[ny_], ny_, MPI_DOUBLE, 
+       rc = MPI_Send(&field2d_A_[ny_*halo_width_x_], ny_*halo_width_x_, MPI_DOUBLE, 
                      left_rank_,///< send to its left domain
                      0, ///<tag for sending field, which is right halo for 
                         ///<its left domain 
                      MPI_COMM_WORLD);
-       rc = MPI_Recv(&field2d_A_[(nx_-1)*ny_], ny_, MPI_DOUBLE,
+       rc = MPI_Recv(&field2d_A_[(nx_wo_halo_+halo_width_x_)*ny_], ny_*halo_width_x_, MPI_DOUBLE,
                      right_rank_,/// recieve from its right domain
                      0, MPI_COMM_WORLD, &Stat);
     }
     else{
-       rc = MPI_Recv(&field2d_A_[(nx_-1)*ny_], ny_, MPI_DOUBLE,
+       rc = MPI_Recv(&field2d_A_[(nx_wo_halo_+halo_width_x_)*ny_], ny_*halo_width_x_, MPI_DOUBLE,
                      right_rank_,/// recieve from its right domain
                      0, MPI_COMM_WORLD, &Stat); 
-       rc = MPI_Send(&field2d_A_[ny_], ny_, MPI_DOUBLE,
+       rc = MPI_Send(&field2d_A_[ny_*halo_width_x_], ny_*halo_width_x_, MPI_DOUBLE,
                      left_rank_, 0, MPI_COMM_WORLD);
     }
 
     ///update all the left halo
     if(rank_%2 == 0){    
-       rc = MPI_Send(&field2d_A_[(nx_-2)*ny_], ny_, MPI_DOUBLE, 
+       rc = MPI_Send(&field2d_A_[nx_wo_halo_*ny_], ny_*halo_width_x_, MPI_DOUBLE, 
                      right_rank_, 
                      1, ///<tag for sending field, which is left halo for 
                         ///<its right domain 
                      MPI_COMM_WORLD);
-       rc = MPI_Recv(&field2d_A_[0], ny_, MPI_DOUBLE,
+       rc = MPI_Recv(&field2d_A_[0], ny_*halo_width_x_, MPI_DOUBLE,
                      left_rank_,/// recieve from its left domain
                      1, MPI_COMM_WORLD, &Stat); 
     }
     else{
-       rc = MPI_Recv(&field2d_A_[0], ny_, MPI_DOUBLE,
+       rc = MPI_Recv(&field2d_A_[0], ny_*halo_width_x_, MPI_DOUBLE,
                      left_rank_,/// recieve from its left domain
                      1, MPI_COMM_WORLD, &Stat); 
-       rc = MPI_Send(&field2d_A_[(nx_-2)*ny_], ny_, MPI_DOUBLE, 
+       rc = MPI_Send(&field2d_A_[nx_wo_halo_*ny_], ny_*halo_width_x_, MPI_DOUBLE, 
                      right_rank_, 
                      1, ///<tag for sending field, which is left halo for 
                         ///<its right domain 
                      MPI_COMM_WORLD);
     }
-
 }
 
 /**
@@ -94,6 +93,6 @@ void GridOmpi::GatherField(double* global_field, ///< where to store the gathere
                            int root///<which processor do the gathering
                           ){
     int rc;
-    rc = MPI_Gather(&field2d_A_[ny_], (nx_-2)*ny_, MPI_DOUBLE,
-                    global_field, (nx_-2)*ny_, MPI_DOUBLE, root, MPI_COMM_WORLD);
+    rc = MPI_Gather(&field2d_A_[halo_width_x_*ny_], nx_wo_halo_*ny_, MPI_DOUBLE,
+                    global_field, nx_wo_halo_*ny_, MPI_DOUBLE, root, MPI_COMM_WORLD);
 }

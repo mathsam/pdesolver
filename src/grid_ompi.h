@@ -28,7 +28,7 @@ public:
 
     ///only part of the domain of the original problem. so need to override
     ///the base class
-    void InitalizeBoundary();
+    void InitializeBoundary();
 
     ///because one does not need to solve for halo, so min_x starts from 1 now
     void DomainToSolve(int & min_x, int & max_x,
