@@ -13,20 +13,22 @@ void PdeSolverOmp::TimeStepping(){
     if(nx_%num_thread_ != 0)
         throw std::invalid_argument("Domain is not divisible by the number of threads");
 
-    int chunk_columns, th_id;
+    int chunk_columns;
     chunk_columns = nx_/num_thread_;
 
     omp_set_num_threads(num_thread_);
-    #pragma omp parallel shared(field2d_, chunk_columns) private (th_id)
+    ///fork
+    #pragma omp parallel default(shared)
     {
-        th_id = omp_get_thread_num();
-        #pragma omp for schedule(guided, chunk_columns)
-        for(int i = 0; i < min_x_; ++i){
+       int th_id = omp_get_thread_num();
+
+        #pragma omp for
+        for(int i = 0; i < max_x_; ++i){
             std::cout << "Thread " << th_id << " is doing row " << i << std::endl; 
             for(int j = min_y_; j <= max_y_; ++j){
                 field2d_.set_point(i,j) += DfDt(i,j) * dt_;
             }
         }
-    } /// end of parallel section
+    }///merge 
 }
 

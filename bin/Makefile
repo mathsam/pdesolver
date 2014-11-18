@@ -4,9 +4,10 @@ CXX = g++
 SRC = ../src
 vpath %.cc $(SRC) #vpath usage: vpath <pattern> <directories>
 CXXFLAGS = -Wall -I../src
+OMPFLAG  = -fopenmp -lpthread
 
-pde_solver_obj = grid.o driver_pde_solver.o pde_solver.o
-pde_solver_omp_obj = $(pde_solver_obj) driver_pde_solver_omp.o
+pde_solver_obj = grid.o pde_solver.o driver_pde_solver.o
+pde_solver_omp_obj =  grid.o pde_solver.o pde_solver_omp.o driver_pde_solver_omp.o
 test_grid_obj  = grid.o test_grid.o 
 exe_list = pde_solver.x test_grid.x pde_solver_omp.x
 
@@ -19,10 +20,13 @@ test_grid.x: $(test_grid_obj)
 	$(CXX) -o $@ $^
 
 pde_solver_omp.x: $(pde_solver_omp_obj)
-	$(CXX) -o $@ $^ -fopenmp
+	$(CXX) $(OMPFLAG) -o $@ $^
+
+#pde_solver_omp.o: $(SRC)/pde_solver_omp.cc
+#	$(CXX) $(CXXFLAGS) $(OMPFLAG)  -o $@ -c $< 
 
 %.o: %.cc
-	$(CXX) $(CXXFLAGS) -c $< 
+	$(CXX) $(OMPFLAG) $(CXXFLAGS) -c $< 
 
 clean:
 	$(RM) *.o *.x
