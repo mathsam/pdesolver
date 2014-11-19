@@ -1,3 +1,9 @@
 **/*.o
 **/*.out
 **/*.x
+**/*.csv
+**/*.out
+**/*.csv
+**/heat_mpi
+**/heat_serial
+**/heat_omp
