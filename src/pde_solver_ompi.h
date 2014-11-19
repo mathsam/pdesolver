@@ -4,6 +4,7 @@
 /**
  * @brief a framework to solve 2d PDE using Open MPI to parallel 
  *
+ * Domain is decomposed into num_proc sub-domains in x direction
  * Mainly the same as Grid for serial program, but uses GridOmpi
  * Main tasks are 
  * (1) spacial differentiation 

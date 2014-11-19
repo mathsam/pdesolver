@@ -2,6 +2,10 @@
 #include<iostream>
 #include<fstream>
 #include<iomanip>
+#include<iostream>
+#include<sstream>
+#include<string>
+#include<string.h>
 
 static const double kKappa = 1.0;
 
@@ -14,6 +18,8 @@ PdeSolverOmpi::PdeSolverOmpi(int nx, int ny,
     field2d_(nx,ny,rank,num_proc,halo_width_x){
     field2d_.DomainToSolve(min_x_, max_x_,
                            min_y_, max_y_);
+    std::cout << "Rank: " << rank_ << " Domain: [" << min_x_ 
+              << ", " << max_x_ << "]" << std::endl;
 };
 
 void PdeSolverOmpi::RunSimulation(double stopping_time, int root){
@@ -63,15 +69,27 @@ void PdeSolverOmpi::WriteField(int root){
 
     if(root == rank_){
         std::ofstream result_file;
-        result_file.open("result.csv");
+        {///formating the output filename
+            std::stringstream ss_filename;
+            ss_filename << "temp_reso" << nx_wo_halo_ * num_proc_ << "x"
+                        << ny_ << "_numproc_" << num_proc_ << ".csv";
+            std:: string filename = ss_filename.str();
+            char char_filename[filename.size()+1];
+            strcpy(char_filename, filename.c_str());
+            result_file.open(char_filename);
+        }
         result_file << std::setprecision(5) << std::fixed;
 
+        double ave_field = 0;
         for(int j = 0; j < ny_; ++j){
             for (int i = 0; i < nx_wo_halo_ * num_proc_; ++i){
                 result_file << global_field[j + i*ny_] << '\t';
+                ave_field += global_field[j + i*ny_];
             }
             result_file << '\n';
         }
         result_file.close();
+        ave_field = ave_field/double(nx_wo_halo_ * num_proc_ * ny_);
+        std::cout << "Average temparature is " << ave_field << std::endl;
     }
 }
